@@ -51,15 +51,18 @@
 				<tr>
 					<th></th>
 					<th>Customer</th>
-					<th>Orders</th>
+					<th>phone</th>
+					<th></th>
 				</tr>
 				{% for customer in customers %}
 				<tr>
 					<td></td>
 					<td>{{customer.name}}</td>
 					<td>{{customer.phone}}</td>
+					<td> <a href="{% url 'customers.show' customer.id %}" class="btn btn-warning">view</a> </td>
 				</tr>
 				{% endfor %}
+
 			</table>
 		</div>
 	</div>
@@ -81,11 +84,10 @@
 					<td>{{order.product.name}}</td>
 					<td>{{order.created_at}}</td>
 					<td>{{order.status}}</td>
-					<td><a href="" class="btn btn-success">Update</a></td>
-					<td><a href="" class="btn btn-danger">Remove</a></td>
+					<td> <a href="" class="btn btn-success">Update</a> </td>
+					<td> <a href="" class="btn btn-danger">Remove</a> </td>
 				</tr>
 				{% endfor %}
-		
 			</table>
 		</div>
 	</div>
