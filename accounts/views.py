@@ -4,14 +4,20 @@ from django.http import HttpResponse, request
 from accounts.models import *
 from accounts.forms import *
 from django.forms import inlineformset_factory
+from .filters import *
+
+
 def customers(request,id):
     customer=Customer.objects.get(id=id)
     orders=customer.order_set.all()
     order_count=orders.count()
+    filterObj=OrderFilter(request.GET,queryset=orders)
+    orders=filterObj.qs
     return render(request,'accounts/customers.html',{
         'customer':customer,
         'orders':orders,
-        'order_count':order_count
+        'order_count':order_count,
+        'filterObj':filterObj
     })
 
 def products(request):
