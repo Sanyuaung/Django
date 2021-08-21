@@ -1,7 +1,9 @@
+from django.forms.models import inlineformset_factory
 from django.shortcuts import render,redirect
 from django.http import HttpResponse, request
 from accounts.models import *
 from accounts.forms import *
+from django.forms import inlineformset_factory
 def customers(request,id):
     customer=Customer.objects.get(id=id)
     orders=customer.order_set.all()
@@ -32,16 +34,18 @@ def dashboard(request):
         'pending':pending
     })
 
-def orderCreate(request):
-    form=OrderForm()
+def orderCreate(request,customerId):
+    OrderFormSet=inlineformset_factory(Customer,Order,fields=('product','status'),extra=10)
+    customer=Customer.objects.get(id=customerId);
+    formset=OrderFormSet(instance=customer)
     if request.method=="POST":
-        form=OrderForm(request.POST)
-        if form.is_valid():
-            form.save();
+        formset=OrderFormSet(request.POST,instance=customer)
+        if formset.is_valid():
+            formset.save();
             return redirect('/');            
 
     return render(request,'accounts/order_form.html',{
-        'form':form
+        'formset':formset
     })
 
 def orderUpdate(request,orderId):
