@@ -1,3 +1,4 @@
+from accounts.decorators import authenticated_user
 from django.forms.models import inlineformset_factory
 from django.shortcuts import render,redirect
 from django.http import HttpResponse, request
@@ -7,8 +8,11 @@ from django.forms import inlineformset_factory
 from .filters import *
 from django.contrib.auth import authenticate,login, logout
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
 
+
+@login_required(login_url='/login')
 def customers(request,id):
     customer=Customer.objects.get(id=id)
     orders=customer.order_set.all()
@@ -22,12 +26,16 @@ def customers(request,id):
         'filterObj':filterObj
     })
 
+
+@login_required(login_url='/login')
 def products(request):
     products=Product.objects.all()
     return render(request,'accounts/products.html',{
         'products':products
     })
 
+
+@login_required(login_url='/login')
 def dashboard(request):
     customers=Customer.objects.all()
     orders=Order.objects.all()
@@ -42,6 +50,8 @@ def dashboard(request):
         'pending':pending
     })
 
+
+@login_required(login_url='/login')
 def orderCreate(request,customerId):
     OrderFormSet=inlineformset_factory(Customer,Order,fields=('product','status'),extra=10)
     customer=Customer.objects.get(id=customerId);
@@ -56,6 +66,8 @@ def orderCreate(request,customerId):
         'formset':formset
     })
 
+
+@login_required(login_url='/login')
 def orderUpdate(request,orderId):
     order=Order.objects.get(id=orderId);
     form=OrderForm(instance=order)
@@ -69,6 +81,8 @@ def orderUpdate(request,orderId):
         'form':form
     })
     
+
+@login_required(login_url='/login')
 def orderDelete(request,orderId):
     order=Order.objects.get(id=orderId);
     if request.method=="POST":
@@ -79,6 +93,8 @@ def orderDelete(request,orderId):
         'order':order
     })
 
+
+@authenticated_user
 def register(request):
     form=RegisterForm()
     if request.method=='POST':
@@ -89,6 +105,8 @@ def register(request):
     return render(request,'accounts/register.html',{
         'form':form
     })
+
+@authenticated_user
 def userlogin(request):
     if request.method=='POST':
         username=request.POST['username']
@@ -102,6 +120,7 @@ def userlogin(request):
             messages.error(request,'username and password is incorrect')
             return redirect('/login')
     return render(request,'accounts/login.html')
+
 
 def userlogout(request):
     logout(request)
