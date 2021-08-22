@@ -5,7 +5,7 @@ from accounts.models import *
 from accounts.forms import *
 from django.forms import inlineformset_factory
 from .filters import *
-from django.contrib.auth import authenticate,login
+from django.contrib.auth import authenticate,login, logout
 from django.contrib import messages
 
 
@@ -102,6 +102,10 @@ def userlogin(request):
             messages.error(request,'username and password is incorrect')
             return redirect('/login')
     return render(request,'accounts/login.html')
+
+def userlogout(request):
+    logout(request)
+    return redirect('/login')
 
 
 
