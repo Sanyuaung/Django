@@ -8,3 +8,12 @@ def authenticated_user(view_fun):
         else  :
            return redirect('/')
     return wrapper;
+
+def admin_only(view_fun):
+    def wrapper(request):
+       if request.user.groups.first().name=="Admin":
+         return view_fun(request)
+          
+       if request.user.groups.first().name=="Customer":
+         return redirect('/customers_profile')
+    return wrapper;
