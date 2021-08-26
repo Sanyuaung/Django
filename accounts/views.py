@@ -1,3 +1,4 @@
+from django.contrib.auth.models import Group
 from accounts.decorators import admin_only, authenticated_user,allowed_roles
 from django.forms.models import inlineformset_factory
 from django.shortcuts import render,redirect
@@ -13,6 +14,7 @@ from django.contrib.auth.decorators import login_required
 
 
 @login_required(login_url='/login')
+@allowed_roles(roles=['Admin'])
 def customers(request,id):
     customer=Customer.objects.get(id=id)
     orders=customer.order_set.all()
@@ -26,11 +28,15 @@ def customers(request,id):
         'filterObj':filterObj
     })
 
+
+@login_required(login_url='/login')
+@allowed_roles(roles=['Customer'])
 def customers_profile(request):
     return render(request,'accounts/customers_profile.html')
 
 
 @login_required(login_url='/login')
+@allowed_roles(roles=['Admin'])
 def products(request):
     products=Product.objects.all()
     return render(request,'accounts/products.html',{
@@ -73,6 +79,7 @@ def orderCreate(request,customerId):
 
 
 @login_required(login_url='/login')
+@allowed_roles(roles=['Admin'])
 def orderUpdate(request,orderId):
     order=Order.objects.get(id=orderId);
     form=OrderForm(instance=order)
@@ -88,6 +95,7 @@ def orderUpdate(request,orderId):
     
 
 @login_required(login_url='/login')
+@allowed_roles(roles=['Admin'])
 def orderDelete(request,orderId):
     order=Order.objects.get(id=orderId);
     if request.method=="POST":
@@ -105,7 +113,10 @@ def register(request):
     if request.method=='POST':
         form=RegisterForm(request.POST)
         if form.is_valid():
-            form.save();
+            user=form.save();
+            gp=Group.objects.get(name="Customer")
+            user.groups.add(gp)
+            login(request,user)
             return redirect('/')
     return render(request,'accounts/register.html',{
         'form':form
@@ -127,6 +138,7 @@ def userlogin(request):
     return render(request,'accounts/login.html')
 
 
+@login_required(login_url='/login')
 def userlogout(request):
     logout(request)
     return redirect('/login')
