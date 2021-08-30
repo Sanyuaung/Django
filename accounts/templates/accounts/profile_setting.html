@@ -1,0 +1,16 @@
+{% extends 'accounts/master.html' %}
+{% load widget_tweaks %}
+{% block content %}
+<form action="" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <h3 class="text-center text-info">Customer Profile Setting</h3>
+    {% for input in form %}
+        <div class="mt-3 text-info">
+            {{input.label}}
+            {{input|add_class:'form-control mt-2'}}
+        </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-info mt-2">Update</button>
+    <a href="{% url 'customers.customers_profile' %}" type="submit" class="btn btn-info mt-2">Back</a>
+</form>
+{% endblock content %}

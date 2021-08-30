@@ -44,6 +44,16 @@ def customers_profile(request):
     })
 
 
+def customers_profile_setting(request):
+    form=CustomerProfile(instance=request.user.customer)
+    if request.method=="POST":
+        form=CustomerProfile(request.POST,request.FILES,instance=request.user.customer)
+        form.save()
+        return redirect('/customers_profile')
+    return render(request,'accounts/profile_setting.html',{
+        'form':form
+    })
+
 @login_required(login_url='/login')
 @allowed_roles(roles=['Admin'])
 def products(request):
