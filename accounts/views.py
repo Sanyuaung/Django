@@ -133,9 +133,7 @@ def register(request):
         form=RegisterForm(request.POST)
         if form.is_valid():
             user=form.save();
-            gp=Group.objects.get(name="Customer")
-            user.groups.add(gp)
-            Customer.objects.create(user=user)
+            
             login(request,user)
             return redirect('/')
     return render(request,'accounts/register.html',{
